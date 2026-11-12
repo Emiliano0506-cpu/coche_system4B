@@ -60,7 +60,7 @@ class App:
         self.asientos=Entry(self.ventana)
         self.asientos.pack(pady=5)
         
-        Button(self.ventana,text=":: Agregar ::",command=self.insertar_coche_controller).pack(pady=5)
+        Button(self.ventana,text=":: Agregar ::",command=lambda: self.insertar_coche_controller(self.marca.get(), self.color.get(), self.modelo.get(), self.velocidad.get(), self.potencia.get(), self.asientos.get())).pack(pady=5)
         
         Button(self.ventana,text=":: Regresar ::",command=self.menu_acciones).pack(pady=5)
        
@@ -73,7 +73,7 @@ class App:
         self.id.focus()
         self.id.pack(pady=5)
         
-        Button(self.ventana,text=":: Eliminar ::",command=self.eliminar_coche_controller).pack(pady=5)
+        Button(self.ventana,text=":: Eliminar ::",command=lambda: self.eliminar_coche_controller(self.id.get())).pack(pady=5)
         
         Button(self.ventana,text=":: Regresar ::",command=self.menu_acciones).pack(pady=5)
         
@@ -120,7 +120,7 @@ class App:
         self.asientos=Entry(self.ventana)
         self.asientos.pack(pady=5)
         
-        Button(self.ventana,text=":: Modificar ::",command=self.modificar_coche_controller).pack(pady=5)
+        Button(self.ventana,text=":: Modificar ::",command=lambda: self.modificar_coche_controller(self.id.get(), self.marca.get(), self.color.get(), self.modelo.get(), self.velocidad.get(), self.potencia.get(), self.asientos.get())).pack(pady=5)
         
         Button(self.ventana,text=":: Regresar ::",command=self.menu_acciones).pack(pady=5)
         
@@ -132,15 +132,19 @@ class App:
             else:
                 messagebox.showerror(title=":: Verifique por favor ::",message="...¡Esta Accion no pudo realizarse en este momento!...")
     
-    def insertar_coche_controller(self):
-        coches1=coches.Coches(self.marca.get(),self.color.get(),self.modelo.get(),self.velocidad.get(),self.potencia.get(),self.asientos.get())                   
+    def insertar_coche_controller(self, marca, color, modelo, velocidad, potencia, asientos):
+        coches1=coches.Coches(marca, color, modelo, velocidad, potencia, asientos)                  
         respuesta=coches1.insertar()
         self.respuesta_sql(respuesta)
         del coches1    
+        if respuesta:
+            self.insertar_coche_view()
        
-    def eliminar_coche_controller(self):
-        respuesta=coches.Coches.eliminar(self.id.get())
+    def eliminar_coche_controller(self, id):
+        respuesta=coches.Coches.eliminar(id)
         self.respuesta_sql(respuesta)
+        if respuesta:
+            self.eliminar_coche_view()
         
     def consultar_coche_controller(self,filas):
         registros=coches.Coches.consultar()
@@ -153,12 +157,13 @@ class App:
             filas="¡No se encontro informacion en la BD!..."
         return filas    
       
-    def modificar_coche_controller(self):
-        id=self.id.get()
-        coches1=coches.Coches(self.marca.get(),self.color.get(),self.modelo.get(),self.velocidad.get(),self.potencia.get(),self.asientos.get())  
+    def modificar_coche_controller(self, id, marca, color, modelo, velocidad, potencia, asientos):
+        coches1=coches.Coches(marca, color, modelo, velocidad, potencia, asientos)  
         respuesta=coches1.actualizar(id)
         self.respuesta_sql(respuesta)
         del coches1
+        if respuesta:
+            self.modificar_coche_view()
           
         
 if __name__=="__main__":
